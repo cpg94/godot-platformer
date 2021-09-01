@@ -1,0 +1,95 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://assets/enemies/slimeBlue_blue.png" type="Texture" id=1]
+[ext_resource path="res://assets/enemies/slimeBlue.png" type="Texture" id=2]
+[ext_resource path="res://Enemy.gd" type="Script" id=3]
+[ext_resource path="res://assets/enemies/slimeBlue_squashed.png" type="Texture" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 18.8546, 13.0479 )
+
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "squashed",
+"speed": 1.0
+}, {
+"frames": [ ExtResource( 2 ), ExtResource( 1 ) ],
+"loop": true,
+"name": "walk",
+"speed": 3.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 13.8559, 3.36065 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 2.60228, 10.1484 )
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 2.40067, 11.1564 )
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 19.2985, 3.15617 )
+
+[node name="Enemy" type="KinematicBody2D"]
+collision_layer = 16
+collision_mask = 19
+script = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 1.24545, 3.85527 )
+shape = SubResource( 1 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 2 )
+animation = "walk"
+playing = true
+
+[node name="FloorChecker" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( 0, 20 )
+collision_mask = 2
+collide_with_areas = true
+
+[node name="TopCheck" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 33
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopCheck"]
+position = Vector2( 1.24545, -15.2707 )
+shape = SubResource( 3 )
+
+[node name="LeftCheck" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 33
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftCheck"]
+position = Vector2( -22.9822, 4.96406 )
+shape = SubResource( 4 )
+
+[node name="RightCheck" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 33
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightCheck"]
+position = Vector2( 24.2926, 4.96406 )
+shape = SubResource( 5 )
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="BottomChecker" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomChecker"]
+position = Vector2( -0.437988, 20.2934 )
+shape = SubResource( 6 )
+
+[connection signal="body_entered" from="TopCheck" to="." method="on_top_entered"]
+[connection signal="body_entered" from="LeftCheck" to="." method="_on_side_body_entered"]
+[connection signal="body_entered" from="RightCheck" to="." method="on_side_body_entered"]
+[connection signal="body_entered" from="RightCheck" to="." method="_on_RightCheck_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[connection signal="body_entered" from="BottomChecker" to="." method="_on_BottomChecker_body_entered"]
